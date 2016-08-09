@@ -182,14 +182,3 @@ function JSE(JSETag){
   });
 }
 
-
-$(document).ready(function(){
-  $("input[type=text]").keyup(function(){
-    if($(this).val() == ""){
-      var output = "<h2 id='amount'>I've found 0 results</h2><hr><div class='result'>I am sorry, I didn't find anything.</div>";
-      $("#results").html(output);
-    } else {
-      JSE($(this).val());
-    }
-  });
-});
