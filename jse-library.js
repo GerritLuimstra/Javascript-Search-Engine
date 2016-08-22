@@ -12,3 +12,18 @@ var JSEConfig = {
     JSECacheInterval: 300, // Sets an expiration date at the cached document(s). (300 seconds, 5 minutes)
   }
 }
+
+
+/*
+    The (small) core of JSE.
+*/
+
+function JSE(JSETag, initFunction, doneFunction){
+  /*
+    The JSETag will contain the keyword a user wants to search for.
+    The initFunction will execute BEFORE JSE does the search.
+    The doneFunction will execute, you guessed it, AFTER the search is complete.
+      - Will contain the time it took to do the search (if enabled!)
+      - Will contain an object with the results
+  */
+}
