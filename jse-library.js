@@ -26,4 +26,19 @@ function JSE(JSETag, initFunction, doneFunction){
       - Will contain the time it took to do the search (if enabled!)
       - Will contain an object with the results
   */
+
+  /*
+    To start off, we want to check if the JSETag is given, since this variable is required to do a search.
+    Secondly, we'd want to check if the initFunction variable is given (if not, no problem, just won't execute) and that it is a valid function.
+    At last, we'd want to do the same for the doneFunction variable.
+  */
+  if(typeof JSETag === "undefined" || JSETag === ""){
+    return false;
+  }
+  else if($.isFunction(initFunction)){
+    initFunction();
+  }
+  else if(!$.isFunction(doneFunction)){
+    return false;
+  }
 }
