@@ -9,7 +9,7 @@ var JSEConfig = {
   cachingConfig : {
     JSECache: true,
     // JSE caches (saves) the document's information into an array, so the next time it scans, it skips the files AJAX requests.
-    JSECacheInterval: 300, // Sets an expiration date at the cached document(s). (300 seconds, 5 minutes)
+    JSECacheInterval: 300 // Sets an expiration date at the cached document(s). (300 seconds, 5 minutes)
   }
 }
 
@@ -83,6 +83,25 @@ function JSE(JSETag, initFunction, doneFunction){
     /*
       The cache is still valid and set, so we can use that instead.
     */
+    $.each(JSEData, function(k, v){
+      if(k == "cacheTime"){ return true; }
+      if(typeof JSEData[k]["hasMatch"] !== "undefined"){
+        delete JSEData[k].hasMatch;
+      }
+      /*
+        Check if JSECaseSensitive is set to false, if it's true, convert everything to lowercase and then search.
+      */
+      if(JSECaseSensitive == false){
+        if(JSEData[k].fileContent.toLowerCase().indexOf(JSETag.toLowerCase()) !== -1){
+          JSEData[k].hasMatch = true;
+        }
+      } else {
+        if(JSEData[k].fileContent.indexOf(JSETag) !== -1){
+          JSEData[k].hasMatch = true;
+        }
+      }
+    });
+    doneWithScanning();
   } else {
     /*
       Here we want to start filling our JSEData object with actual data.
@@ -97,7 +116,7 @@ function JSE(JSETag, initFunction, doneFunction){
         for (var i = 0; i < fileList.length; i++) {
           JSEData[fileList[i]] = {};
         }
-        // Execute the callback function.
+
         fileRetrievalDone();
       }
     });
@@ -116,6 +135,7 @@ function JSE(JSETag, initFunction, doneFunction){
 
       // For each file name, load the text contents of this file into the JSEData object.
       $.each(JSEData, function(fileName){
+        if(fileName == "cacheTime") { return true; }
         $.ajax({ url: window.location +"/" + fileName,
           success: function(fileContent){
             /*
@@ -129,10 +149,13 @@ function JSE(JSETag, initFunction, doneFunction){
             // Append the fileContent into the JSEPlaceholder element. (while removing attached JavaScript using $.parseHTML)
             $(JSEPlaceholder).html($.parseHTML(fileContent));
             // Add the text content into the JSEData object.
-            JSEData[fileName]["fileContent"] =
-                $(JSEPlaceholder).text().toString().replace(/(\r\n|\n|\r)/gm,"")
-                + $(JSEPlaceholder).children().text().toString().replace(/(\r\n|\n|\r)/gm,"")
+            JSEData[fileName].fileContent =
+                $.trim($(JSEPlaceholder).text().toString().replace(/(\r\n|\n|\r)/gm,""))
+                + $.trim($(JSEPlaceholder).children().text().toString().replace(/(\r\n|\n|\r)/gm,""))
                 + fileName;
+            if($(JSEPlaceholder).find("title").length > 0 && $(JSEPlaceholder).find("title").text() !== ""){
+              JSEData[fileName].webTitle = $(JSEPlaceholder).find("title").text();
+            }
             // Empty the JSEPlaceholder element.
             $(JSEPlaceholder).empty();
 
@@ -146,8 +169,41 @@ function JSE(JSETag, initFunction, doneFunction){
 
     function fileContentRetrievalDone(amountOfFiles, currFile){
       if(currFile == amountOfFiles){
-        /* The scan is complete. */
+        // When the data grabbin' is done. Execute the search function.
+        searchForAMatch();
       }
+    }
+
+    function searchForAMatch(){
+      $.each(JSEData, function(k, v){
+        if(k == "cacheTime"){ return true; }
+        /*
+          Check if JSECaseSensitive is set to false, if it's true, convert everything to lowercase and then search.
+        */
+        if(JSECaseSensitive == false){
+          if(JSEData[k].fileContent.toLowerCase().indexOf(JSETag.toLowerCase()) !== -1){
+            JSEData[k].hasMatch = true;
+          }
+        } else {
+          if(JSEData[k].fileContent.indexOf(JSETag) !== -1){
+            JSEData[k].hasMatch = true;
+          }
+        }
+      });
+      doneWithScanning();
+    }
+  }
+  function doneWithScanning(){
+    /*
+      The scan is now officially done.
+      If JSEMeasureSpeed was set the true, calculate the time it took to execute the scan.
+    */
+    if(JSEMeasureSpeed == true){
+      var JSEPerfMeasureEnd = performance.now();
+      var timeElapsed = Math.ceil(JSEPerfMeasureEnd - JSEPerfMeasureStart) + "ms";
+      doneFunction(JSEData, timeElapsed);
+    } else {
+      doneFunction(JSEData);
     }
   }
 }
