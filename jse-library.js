@@ -9,7 +9,7 @@ var JSEConfig = {
   cachingConfig : {
     JSECache: true,
     // JSE caches (saves) the document's information into an array, so the next time it scans, it skips the files AJAX requests.
-    JSECacheInterval: 300 // Sets an expiration date at the cached document(s). (300 seconds, 5 minutes)
+    JSECacheInterval: 300, // Sets an expiration date at the cached document(s). (300 seconds, 5 minutes)
   }
 }
 
@@ -106,14 +106,48 @@ function JSE(JSETag, initFunction, doneFunction){
      Now that we have the file names, we want to grab the text content(s) from this file, so we can fill our JSEData object.
     */
     function fileRetrievalDone(){
+      /*
+         Because callbacks are hard when combining asynchronous functions with synchronous functions, I've come up with a quick solution.
+         Counting the amount of items in the JSEData object, and everything the HTML append function is done, execute a callback with the current file number attached.
+         If the parameter is equal to the amount of files in the JSEData object, it is done with executing the HTML append functions.
+      */
+      var currFile = 0;
+      var amountOfFiles = 0; for(var prop in JSEData) { amountOfFiles++; }; amountOfFiles--;
+
       // For each file name, load the text contents of this file into the JSEData object.
       $.each(JSEData, function(fileName){
         $.ajax({ url: window.location +"/" + fileName,
           success: function(fileContent){
-            // Here is the file content.
+            /*
+              The fileContent variable now contains the file its contents.
+              We place this in the given JSEPlaceholder element (without the Javascript code attached!),
+              so that we can then grab the text contents from the given data.
+            */
+
+            // Hide the JSEPlaceholder element, to be sure the user doesn't see this. (They shouldn't)
+            $(JSEPlaceholder).hide();
+            // Append the fileContent into the JSEPlaceholder element. (while removing attached JavaScript using $.parseHTML)
+            $(JSEPlaceholder).html($.parseHTML(fileContent));
+            // Add the text content into the JSEData object.
+            JSEData[fileName]["fileContent"] =
+                $(JSEPlaceholder).text().toString().replace(/(\r\n|\n|\r)/gm,"")
+                + $(JSEPlaceholder).children().text().toString().replace(/(\r\n|\n|\r)/gm,"")
+                + fileName;
+            // Empty the JSEPlaceholder element.
+            $(JSEPlaceholder).empty();
+
+            // Execute the callback function.
+            currFile++;
+            fileContentRetrievalDone(amountOfFiles, currFile);
           }
         });
       });
+    }
+
+    function fileContentRetrievalDone(amountOfFiles, currFile){
+      if(currFile == amountOfFiles){
+        /* The scan is complete. */
+      }
     }
   }
 }
