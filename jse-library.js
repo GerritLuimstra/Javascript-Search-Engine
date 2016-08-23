@@ -73,10 +73,10 @@ function JSE(JSETag, initFunction, doneFunction){
   }
 
   // Determine if cache should be used or not
-  var count = $.map(JSEData, function(n, i) { return i; }).length;
-  if(count == 1){
-    // rebuild the cache
-  } else {
+  var useCache = $.map(JSEData, function(n, i) { return i; }).length !== 1 ? true : false;
+  if(useCache){
     // use the cache
+  } else {
+    // rebuild the cache
   }
 }
