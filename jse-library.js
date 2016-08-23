@@ -127,7 +127,7 @@ function JSE(JSETag, initFunction, doneFunction){
     function fileRetrievalDone(){
       /*
          Because callbacks are hard when combining asynchronous functions with synchronous functions, I've come up with a quick solution.
-         Counting the amount of items in the JSEData object, and everything the HTML append function is done, execute a callback with the current file number attached.
+         Counting the amount of items in the JSEData object, and everytime the HTML append function is done, execute a callback with the current file number attached.
          If the parameter is equal to the amount of files in the JSEData object, it is done with executing the HTML append functions.
       */
       var currFile = 0;
