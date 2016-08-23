@@ -9,7 +9,8 @@ Because I operate like this, there is no need for a database and because of that
 
 ```javascript
 $("input[type=text]").keyup(function(){
-		
+
+  // JSE(<value_to_look_for> <start_function> <done_function>)
   JSE(
     $(this).val(), 
     function(){
