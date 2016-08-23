@@ -7,18 +7,14 @@ Because I operate like this, there is no need for a database and because of that
 
 ### Example usage
 
-First link the JSE library to your HTML document
-'<script src="link/to/path/jse_library.js" type="text/javascript"></script>'
-
-Then this could be an example usage:
-
 ```javascript
 $("input[type=text]").keyup(function(){
 		
   JSE(
     $(this).val(), 
     function(){
-      console.log("This function executes before anything happens, but can also be set to null if there is no need for it!");
+      console.log("This function executes before anything happens, "); 
+      console.log("but can also be set to null if there is no need for it!");
     }, 
     function(results, timeElapsed){
 	console.log("This function executes when the search is done. ");
@@ -26,7 +22,8 @@ $("input[type=text]").keyup(function(){
 	console.log("And if set, the time to took to execute the scan is stored in the timeElapsed variable");
 	// Side note: You can change the names of the variables to your likings. 
 	// (Just don't mess up the order, would ya?)
-       }
+     }
   });
 });
 ```
+And be sure not to forget to append the JSE library file onto the bottom of your HTML document!
