@@ -35,10 +35,10 @@ function JSE(JSETag, initFunction, doneFunction){
   if(typeof JSETag === "undefined" || JSETag === ""){
     return false;
   }
-  else if($.isFunction(initFunction)){
-    initFunction();
-  }
   else if(!$.isFunction(doneFunction)){
     return false;
+  }
+  else if($.isFunction(initFunction)){
+    initFunction();
   }
 }
