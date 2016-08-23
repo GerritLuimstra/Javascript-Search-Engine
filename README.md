@@ -15,15 +15,18 @@ Then this could be an example usage:
 ```javascript
 $("input[type=text]").keyup(function(){
 		
-    JSE($(this).val(), function(){
+  JSE(
+    $(this).val(), 
+    function(){
       console.log("This function executes before anything happens, but can also be set to null if there is no need for it!");
-    }, function(results, timeElapsed){
-console.log("This function executes when the search is done. ");
-console.log("It contains an object with all the data you need in the results variable ");
-console.log("and if set (in the configuration), the time to took to execute the scan is stored in the timeElapsed variable");
-// Side note: You can change the names of the variables to your likings. 
-// (Just don't mess up the order, would ya?)
+    }, 
+    function(results, timeElapsed){
+	console.log("This function executes when the search is done. ");
+	console.log("It contains an object with all the data you need in the results variable ");
+	console.log("And if set, the time to took to execute the scan is stored in the timeElapsed variable");
+	// Side note: You can change the names of the variables to your likings. 
+	// (Just don't mess up the order, would ya?)
+       }
+  });
 });
-      
-	  });
 ```
