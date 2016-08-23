@@ -9,7 +9,7 @@ var JSEConfig = {
   cachingConfig : {
     JSECache: true,
     // JSE caches (saves) the document's information into an array, so the next time it scans, it skips the files AJAX requests.
-    JSECacheInterval: 300, // Sets an expiration date at the cached document(s). (300 seconds, 5 minutes)
+    JSECacheInterval: 300 // Sets an expiration date at the cached document(s). (300 seconds, 5 minutes)
   }
 }
 
@@ -80,8 +80,40 @@ function JSE(JSETag, initFunction, doneFunction){
   // Determine if cache should be used or not
   var useCache = $.map(JSEData, function(n, i) { return i; }).length !== 1 ? true : false;
   if(useCache){
-    // use the cache
+    /*
+      The cache is still valid and set, so we can use that instead.
+    */
   } else {
-    // rebuild the cache
+    /*
+      Here we want to start filling our JSEData object with actual data.
+      What we want to insert first, is all of the file names that are in the given directory, set in the PHP file.
+      To accomplish this, we send an AJAX request to the server that will list these files and will return them the same way.
+    */
+    $.ajax({ url: JSEPHPDest, data: "requestFileNames=true", method: "POST",
+      success: function(fileList){
+        // Parse the file list, so the browser is able to understand this.
+        var fileList = JSON.parse(fileList);
+        // Add the files of the fileList variable into JSEData.
+        for (var i = 0; i < fileList.length; i++) {
+          JSEData[fileList[i]] = {};
+        }
+        // Execute the callback function.
+        fileRetrievalDone();
+      }
+    });
+
+    /*
+     Now that we have the file names, we want to grab the text content(s) from this file, so we can fill our JSEData object.
+    */
+    function fileRetrievalDone(){
+      // For each file name, load the text contents of this file into the JSEData object.
+      $.each(JSEData, function(fileName){
+        $.ajax({ url: window.location +"/" + fileName,
+          success: function(fileContent){
+            // Here is the file content.
+          }
+        });
+      });
+    }
   }
 }
