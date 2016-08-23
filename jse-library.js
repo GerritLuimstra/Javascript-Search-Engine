@@ -56,6 +56,11 @@ function JSE(JSETag, initFunction, doneFunction){
   var JSECacheMode = JSEConfig.cachingConfig.JSECacheMode;
   var JSECacheInterval = JSEConfig.cachingConfig.JSECacheInterval;
 
+  // If JSEMeasureSpeed is set to true, measure the start time.
+  if(JSEMeasureSpeed == true){
+    var JSEPerfMeasureStart = performance.now();
+  }
+
   // If there is cache available, use it. If not, create a new empty object.
   JSEData = window.JSEData = (typeof window.JSEData === "undefined") ? {} : window.JSEData;
 
